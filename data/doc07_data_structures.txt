@@ -1,0 +1,7 @@
+Data Structures for Dictionaries
+
+The dictionary of a search engine stores every distinct term in the collection. A binary
+search tree keeps terms in sorted order and supports search in logarithmic time on
+average, but it can degrade to linear time when unbalanced. A B-tree keeps many keys per
+node and stays balanced, which guarantees logarithmic search even for very large
+dictionaries stored on disk. Both structures support range queries and prefix lookups.

@@ -1,0 +1,7 @@
+streamlit>=1.30
+pandas>=2.0
+# Optional: enables the full Porter stemmer and WordNet lemmatizer.
+# The app runs without nltk (built-in fallbacks are used automatically).
+nltk>=3.8
+# Used only by make_contribution.py to (re)generate the contribution sheet.
+openpyxl>=3.1

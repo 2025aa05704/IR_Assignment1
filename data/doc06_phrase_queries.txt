@@ -1,0 +1,7 @@
+Phrase and Proximity Queries
+
+A phrase query matches documents that contain a sequence of words in exact order, for
+example "machine learning" or "information retrieval". A biword index stores consecutive
+pairs of words and can answer two-word phrase queries quickly, but it may return false
+positives for longer phrases. A positional index stores the exact position of every term,
+so it can verify that the words actually appear adjacent in the correct order.

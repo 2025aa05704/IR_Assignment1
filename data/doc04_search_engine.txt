@@ -1,0 +1,7 @@
+How Search Engines Work
+
+A search engine crawls the web, builds an inverted index and answers user queries in
+milliseconds. When a user types a query, the search engine retrieves matching documents,
+ranks them by relevance and returns the top results. Ranking combines term frequency,
+inverse document frequency and link analysis. Query processing must handle misspelled
+words, wildcard queries and phrase queries such as "information retrieval".

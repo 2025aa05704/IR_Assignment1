@@ -1,0 +1,7 @@
+Inverted Index Construction
+
+The inverted index is the central data structure of most information retrieval systems.
+It maps every term to a postings list of the documents that contain the term. Building
+an inverted index requires tokenization, lowercasing, stop-word removal and stemming.
+A positional index additionally stores the positions of each term so that phrase queries
+and proximity queries can be answered accurately by the search engine.

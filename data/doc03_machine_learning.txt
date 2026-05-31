@@ -1,0 +1,7 @@
+Machine Learning Basics
+
+Machine learning is a branch of artificial intelligence that learns patterns from data.
+Supervised learning algorithms learn from labelled examples, while unsupervised learning
+discovers structure in unlabelled data. Machine learning models are widely used to rank
+search results, classify documents and recommend relevant content to users. Training a
+model on a large dataset improves its ability to generalise to unseen examples.

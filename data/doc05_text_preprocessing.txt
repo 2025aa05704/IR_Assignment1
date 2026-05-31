@@ -1,0 +1,7 @@
+Text Preprocessing Pipeline
+
+Text preprocessing transforms raw text into clean tokens for indexing. The pipeline
+begins with tokenization, which splits text into words. Lowercasing normalises the case
+of every token. Stop-word removal deletes very common words such as the, is and of.
+Stemming reduces words to their root form, while lemmatization maps words to their
+dictionary lemma. Proper preprocessing improves both precision and recall of retrieval.

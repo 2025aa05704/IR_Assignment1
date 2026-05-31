@@ -1,0 +1,7 @@
+The Vector Space Model
+
+The vector space model represents documents and queries as vectors of term weights. Each
+term is weighted using term frequency and inverse document frequency, known as tf-idf.
+The relevance of a document to a query is measured by the cosine similarity between their
+vectors. Documents with a higher cosine similarity are ranked nearer the top of the
+result list. The vector space model is simple, effective and widely used in retrieval.

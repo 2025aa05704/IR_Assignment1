@@ -1,0 +1,7 @@
+Tolerant Retrieval Techniques
+
+Tolerant retrieval helps a search engine answer imperfect queries. Wildcard queries such
+as inform* match every term that begins with the prefix inform. Spelling correction uses
+edit distance to suggest the closest dictionary term for a misspelled word. A k-gram index
+stores character n-grams and speeds up wildcard and spelling correction. Phonetic
+correction with the Soundex algorithm matches words that sound alike, such as Robert and Rupert.

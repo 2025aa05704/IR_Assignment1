@@ -1,0 +1,7 @@
+Web Crawling and Indexing
+
+A web crawler systematically browses the world-wide web to collect documents for a search
+engine. The crawler follows hyper-links from page to page and downloads the content of
+each page. Collected pages are parsed, preprocessed and added to the inverted index.
+Large-scale crawling must respect politeness policies and avoid overloading web servers.
+Fresh and comprehensive crawling keeps the search index up-to-date and relevant.

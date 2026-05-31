@@ -1,0 +1,7 @@
+Information Retrieval Systems
+
+Information retrieval is the science of searching for documents and for information
+within documents. An information-retrieval system processes a collection of documents
+and returns the most relevant results for a user query. Modern search engines rank
+documents using statistical models such as the vector space model and probabilistic
+models. Indexing the documents in advance makes retrieval fast and scalable.

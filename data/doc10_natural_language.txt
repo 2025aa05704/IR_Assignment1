@@ -1,0 +1,7 @@
+Natural Language Processing
+
+Natural language processing enables computers to understand human language. Common tasks
+include tokenization, part-of-speech tagging, named-entity recognition and sentiment
+analysis. Many information retrieval systems use natural language processing to improve
+query understanding and document representation. Word embeddings capture the semantic
+similarity between words, helping the search engine match queries to relevant documents.
