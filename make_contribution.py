@@ -22,10 +22,9 @@ OUTPUT_FILE = f"Group{GROUP_ID}_Contribution.xlsx"
 # All percentages are 100 because everyone contributed fully.
 # --------------------------------------------------------------------------- #
 STUDENTS = [
-    ("<REG_NO_1>", "<Student Name 1>"),
-    ("<REG_NO_2>", "<Student Name 2>"),
-    ("<REG_NO_3>", "<Student Name 3>"),
-    ("<REG_NO_4>", "<Student Name 4>"),
+    ("2025AA05704", "PIYALI SARKAR"),
+    ("2025AA05680", "PRATEEK KUMAR GUPTA"),
+    ("2025AA05699", "KASHIF ZUHAIR"),
 ]
 
 COLUMNS = [

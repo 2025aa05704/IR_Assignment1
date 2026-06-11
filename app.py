@@ -391,8 +391,16 @@ with tabs[3]:
 # --------------------------------------------------------------------------- #
 with tabs[4]:
     st.header("E. Tolerant retrieval")
-    index = build_index()
+    # Tolerant retrieval (wildcard / spelling / k-gram / phonetic) operates on the
+    # *un-stemmed* dictionary of terms: query-term correction and expansion happen
+    # before normalization, so we must match against real words (e.g. "retrieval",
+    # not the stem "retriev"). Build the dictionary with normalization disabled.
+    index = build_index("none")
     vocab = index.vocabulary
+    st.caption(
+        "Dictionary built without stemming/lemmatization so corrections match real "
+        "words (tolerant retrieval is applied to the query term *before* normalization)."
+    )
 
     technique = st.radio(
         "Choose a technique",
