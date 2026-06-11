@@ -276,8 +276,14 @@ with tabs[1]:
 with tabs[2]:
     st.header("C. Phrase query processing")
     st.write("Compare **biword** and **positional** index answers for a phrase query.")
+    st.info(
+        "Try **`wildcard query information`** to see the biword index produce a "
+        "**false positive** (it matches a doc that contains the word pairs but not the "
+        "contiguous phrase), which the positional index correctly rejects. "
+        "Try **`information retrieval`** for a clean exact match."
+    )
 
-    phrase = st.text_input("Enter a phrase query", value="information retrieval",
+    phrase = st.text_input("Enter a phrase query", value="wildcard query information",
                            key="phrase_query")
     index = build_index()
 
