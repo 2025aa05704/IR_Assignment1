@@ -7,6 +7,8 @@ from the front end.
 
 Course: Information Retrieval (AIMLCZG537 / DSECLZG537), S2-25.
 
+**Live app (deployed on Streamlit Community Cloud):** https://irassignment1-group-63.streamlit.app/
+
 ---
 
 ## Features (mapped to the assignment tasks)

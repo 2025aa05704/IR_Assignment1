@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>IR Assignment 1 - Report (Group 63)</title>
+<style>
+@page { size: A4; margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 11pt; line-height: 1.55; color: #1a1a1a; margin: 0;
+}
+h1 { font-size: 22pt; margin: 0 0 6pt; padding-bottom: 6pt; border-bottom: 3px solid #2c5f8a; color: #1f3b54; }
+h2 { font-size: 15pt; margin: 18pt 0 6pt; padding-bottom: 3pt; border-bottom: 1px solid #c9d6e3; color: #244b6b; page-break-after: avoid; }
+h3 { font-size: 12.5pt; margin: 12pt 0 4pt; color: #2c5f8a; page-break-after: avoid; }
+p { margin: 5pt 0; }
+a { color: #1565c0; text-decoration: none; word-break: break-all; }
+ul, ol { margin: 5pt 0 5pt 18pt; }
+li { margin: 2pt 0; }
+code { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 9.5pt; background: #f1f3f5; padding: 1px 4px; border-radius: 3px; }
+pre { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 10px 12px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; font-size: 9.5pt; page-break-inside: avoid; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 8pt 0; padding: 4pt 12pt; border-left: 4px solid #c9d6e3; color: #555; background: #f8fafc; }
+table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 9.5pt; page-break-inside: avoid; }
+th, td { border: 1px solid #b9c4cf; padding: 5px 8px; text-align: left; vertical-align: top; }
+th { background: #eaf1f8; font-weight: 600; }
+tr:nth-child(even) td { background: #fafcfe; }
+img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; margin: 8pt 0; page-break-inside: avoid; }
+hr { border: 0; border-top: 1px solid #dde3ea; margin: 14pt 0; }
+</style>
+</head>
+<body>
+<h1>Information Retrieval — Assignment 1 Report</h1>
+<p><strong>Course:</strong> Information Retrieval (AIMLCZG537 / DSECLZG537), S2-25<br />
+<strong>Group:</strong> 63<br />
+<strong>Deliverable:</strong> End-to-end IR system built with Streamlit (<code>app.py</code>)<br />
+<strong>Live app (deployed):</strong> https://irassignment1-group-63.streamlit.app/</p>
+<hr />
+<h2>1. Objective &amp; Overview</h2>
+<p>We designed and implemented an interactive, end-to-end Information Retrieval system<br />
+using <strong>Streamlit</strong>. The user can upload a document collection, view it, configure<br />
+preprocessing, run ranked/phrase/tolerant queries, and compare data structures —<br />
+all from the front end. No backend notebook output is required; every result is<br />
+produced live in the UI.</p>
+<p><strong>Architecture</strong></p>
+<ul>
+<li><code>app.py</code> — Streamlit front end with six tabs (A–E and the compulsory inferences G).</li>
+<li><code>ir_utils.py</code> — all IR algorithms (preprocessing, inverted/positional/biword indexes,<br />
+  BST, B-Tree, edit distance, k-gram, Soundex, tf-idf ranking).</li>
+<li><code>data/</code> — sample collection of 12 short text documents about IR concepts.</li>
+</ul>
+<hr />
+<h2>2. Executing on the BITS Lab Portal (Task – 1 mark)</h2>
+<p>The application was executed on the <strong>BITS virtual lab</strong> (Rocky Linux desktop via<br />
+<code>argo-rdp.codeargo.net</code>). The app is also deployed on Streamlit Community Cloud so it<br />
+can be opened directly from the lab browser:</p>
+<p><strong>Live app URL:</strong> https://irassignment1-group-63.streamlit.app/</p>
+<p>Steps performed:</p>
+<ol>
+<li>Logged in to the BITS virtual lab (Rocky Linux) and opened the browser.</li>
+<li>Opened the deployed app at https://irassignment1-group-63.streamlit.app/<br />
+   (alternatively: <code>pip install -r requirements.txt</code> then <code>streamlit run app.py</code>).</li>
+<li>Interacted with each tab (A–E and G) through the browser; 12 documents loaded.</li>
+</ol>
+<p><img alt="BITS virtual lab running the IR app (https://irassignment1-group-63.streamlit.app/)" src="screenshots/bits_lab_app.png" /></p>
+<p><em>Figure: IR System (Group 63) running in the BITS virtual lab browser — 12 documents loaded, Tab A "View documents and run a search".</em></p>
+<hr />
+<h2>3. Section A — Streamlit End-to-End Workflow</h2>
+<ul>
+<li><strong>Upload</strong>: sidebar file uploader accepts multiple <code>.txt</code>/<code>.csv</code> files; a sample<br />
+  collection loads by default.</li>
+<li><strong>View documents</strong>: expandable list in Tab A.</li>
+<li><strong>Queries</strong>: free-text search box; results ranked by <strong>tf-idf cosine similarity</strong>.</li>
+<li><strong>Options</strong>: lowercasing, stop-word removal, hyphen mode, normalization — all in the sidebar.</li>
+<li><strong>Intermediate + final outputs</strong>: inverted index (postings), preprocessing stages,<br />
+  ranked results — all displayed in the UI.</li>
+</ul>
+<hr />
+<h2>4. Section B — Text Preprocessing</h2>
+<p>Pipeline (each stage shown in Tab B):<br />
+<strong>Tokenization → Lowercasing → Hyphen handling → Stop-word removal → Stemming / Lemmatization → Inverted index.</strong></p>
+<ul>
+<li><strong>Tokenization</strong>: regex word tokenizer (keeps internal hyphens for the hyphen stage).</li>
+<li><strong>Lowercasing</strong>: case normalization.</li>
+<li><strong>Hyphen handling</strong>: three modes — <code>split</code> (<code>state-of-the-art</code> → state, of, the, art),<br />
+<code>keep</code>, <code>join</code> (<code>stateoftheart</code>).</li>
+<li><strong>Stop-word removal</strong>: built-in English stop list.</li>
+<li><strong>Stemming</strong>: Porter stemmer (NLTK if installed, else built-in suffix stripper).</li>
+<li><strong>Lemmatization</strong>: WordNet (NLTK if available, else rule-based).</li>
+</ul>
+<h3>4.1 Stemming vs Lemmatization (retrieval-quality comparison)</h3>
+<p>We compare on two axes:</p>
+<ol>
+<li><strong>Vocabulary reduction (conflation power)</strong> — fewer distinct terms means more<br />
+   surface forms are merged.</li>
+<li><strong>Retrieval overlap</strong> — Jaccard similarity of the documents retrieved under each<br />
+   scheme vs. the no-normalization baseline, across several test queries.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Scheme</th>
+<th>Vocabulary size</th>
+<th>Reduction vs raw</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No normalization</td>
+<td><em>fill from app</em></td>
+<td>0.0%</td>
+</tr>
+<tr>
+<td>Stemming</td>
+<td><em>fill from app</em></td>
+<td><em>e.g.</em> ~18%</td>
+</tr>
+<tr>
+<td>Lemmatization</td>
+<td><em>fill from app</em></td>
+<td><em>e.g.</em> ~10%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Inference:</strong> Stemming conflates more aggressively (e.g. <em>retrieval/retrieving/retrieved<br />
+→ retriev</em>), giving higher recall and a smaller index, at the cost of producing<br />
+non-dictionary stems. Lemmatization yields valid words (better precision/readability)<br />
+but merges fewer forms. <strong>For this dataset stemming is more suitable</strong> because it<br />
+maximises recall on a small collection; lemmatization is preferable when output<br />
+readability/precision matters. (Exact numbers are produced live by the app.)</p>
+<hr />
+<h2>5. Section C — Phrase Query Processing</h2>
+<p>Implemented and compared two indexes:</p>
+<ul>
+<li><strong>Biword index</strong>: stores consecutive word pairs → can answer 2-word phrases quickly.</li>
+<li><strong>Positional index</strong>: stores exact positions of each term in each document.</li>
+</ul>
+<p>For a phrase, the biword index intersects the postings of each consecutive biword;<br />
+the positional index additionally verifies that the terms occur at <strong>consecutive<br />
+positions in order</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Biword index</th>
+<th>Positional index</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Storage</td>
+<td>pairs of terms</td>
+<td>term → {doc → [positions]}</td>
+</tr>
+<tr>
+<td>2-word phrases</td>
+<td>exact</td>
+<td>exact</td>
+</tr>
+<tr>
+<td>3+ word phrases</td>
+<td>may give <strong>false positives</strong></td>
+<td>exact</td>
+</tr>
+<tr>
+<td>Proximity queries</td>
+<td>no</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>False positives:</strong> for a phrase like <em>"a b c"</em>, a document containing <em>"a b … c b"</em><br />
+has both biwords <em>"a b"</em> and <em>"b c"</em> but not the contiguous phrase. The biword index<br />
+returns it; the positional index correctly rejects it. The app highlights such<br />
+false positives (set difference between the two results).</p>
+<p><strong>Why positional is more accurate:</strong> it checks global order and adjacency via stored<br />
+positions, which the biword index cannot.</p>
+<hr />
+<h2>6. Section D — Dictionary Search: BST vs B-Tree</h2>
+<p>A dictionary of all distinct terms is built, then inserted into:</p>
+<ul>
+<li><strong>Binary Search Tree (BST)</strong> — unbalanced; average O(log n), worst case O(n).</li>
+<li><strong>B-Tree</strong> (configurable minimum degree <em>t</em>) — always balanced; O(log n) guaranteed,<br />
+  few node accesses (disk-friendly).</li>
+</ul>
+<p>We run multiple query terms many times and record <strong>comparisons</strong> and <strong>search time</strong>.</p>
+<p>Example results table (values produced live in the app):</p>
+<table>
+<thead>
+<tr>
+<th>Query Term</th>
+<th>Found</th>
+<th>BST Comparisons</th>
+<th>B-Tree Comparisons</th>
+<th>BST Time (µs)</th>
+<th>B-Tree Time (µs)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>term1</em></td>
+<td>✓</td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+</tr>
+<tr>
+<td><em>term2</em></td>
+<td>✓</td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+</tr>
+<tr>
+<td>zzznotfound</td>
+<td>✗</td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+<td><em>...</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Inference:</strong> The B-Tree's height is much smaller than the BST's, so it visits fewer<br />
+nodes. The BST can degrade when terms are inserted in near-sorted order. For small<br />
+in-memory dictionaries the absolute times are close, but <strong>the B-Tree scales far<br />
+better for large, disk-resident dictionaries</strong> because each node access (a disk read)<br />
+is expensive and the B-Tree minimises them.</p>
+<hr />
+<h2>7. Section E — Tolerant Retrieval</h2>
+<p>The system handles imperfect queries with four techniques (Tab E):</p>
+<ul>
+<li><strong>Wildcard queries</strong> (<code>inform*</code>, <code>*tion</code>, <code>re*ed</code>): resolved using a <strong>k-gram index</strong><br />
+  to shortlist candidates, then verified with a regex.</li>
+<li><strong>Spelling correction</strong>: <strong>Levenshtein edit distance</strong> ranks the closest dictionary<br />
+  terms (e.g. <code>retreival → retrieval</code>).</li>
+<li><strong>K-gram index</strong>: character n-grams ($-padded) mapped to terms; shown explicitly.</li>
+<li><strong>Phonetic correction</strong>: <strong>Soundex</strong> matches words that sound alike.</li>
+</ul>
+<p><strong>Inference:</strong> The model is tolerant to prefix/suffix wildcards, typographical errors<br />
+(within an edit-distance threshold) and phonetic spelling variants, substantially<br />
+improving recall on noisy queries.</p>
+<hr />
+<h2>8. Section G — Inference and Discussion (Compulsory)</h2>
+<ul>
+<li><strong>Which preprocessing technique improved retrieval quality?</strong> Stop-word removal plus<br />
+  normalization (stemming/lemmatization) — they conflate surface forms and remove noise.</li>
+<li><strong>Stemming or lemmatization better for this dataset?</strong> Stemming (higher recall, smaller<br />
+  index); lemmatization when precision/readability matters. Justified quantitatively in Tab B.</li>
+<li><strong>Which phrase query index was more accurate?</strong> Positional index (no false positives,<br />
+  verifies order/adjacency).</li>
+<li><strong>Which tree structure was faster?</strong> B-Tree (balanced, fewer node accesses), especially<br />
+  at scale.</li>
+<li><strong>How tolerant was the retrieval model?</strong> Handles wildcards, spelling errors and phonetic<br />
+  variants.</li>
+<li><strong>Limitations:</strong> small in-memory corpus; tf-idf ignores semantics &amp; word order; fallback<br />
+  stemmer/lemmatizer simpler than NLTK; Soundex is English-only.</li>
+<li><strong>Improvements:</strong> BM25 ranking, dense/embedding retrieval, frequency-weighted spelling<br />
+  correction, query expansion, persistent on-disk indexes, relevance feedback.</li>
+</ul>
+<hr />
+<h2>9. How to Run (summary)</h2>
+<pre><code class="language-bash">pip install -r requirements.txt
+streamlit run app.py
+</code></pre>
+<p>See <code>README.md</code> for full details.</p>
+<hr />
+<h2>10. Contribution</h2>
+<p>All group members contributed equally (<strong>100% each</strong>). See <code>Group63_Contribution.xlsx</code>.</p>
+</body>
+</html>

@@ -3,9 +3,7 @@
 **Course:** Information Retrieval (AIMLCZG537 / DSECLZG537), S2-25
 **Group:** 63
 **Deliverable:** End-to-end IR system built with Streamlit (`app.py`)
-
-> Replace the screenshot placeholders `[SCREENSHOT: ...]` with images captured
-> while running the app in the BITS virtual lab.
+**Live app (deployed):** https://irassignment1-group-63.streamlit.app/
 
 ---
 
@@ -24,20 +22,26 @@ produced live in the UI.
   BST, B-Tree, edit distance, k-gram, Soundex, tf-idf ranking).
 - `data/` — sample collection of 12 short text documents about IR concepts.
 
-`[SCREENSHOT: app home / Tab A with documents loaded]`
-
 ---
 
 ## 2. Executing on the BITS Lab Portal (Task – 1 mark)
 
-The application was executed on the BITS virtual lab. Steps:
+The application was executed on the **BITS virtual lab** (Rocky Linux desktop via
+`argo-rdp.codeargo.net`). The app is also deployed on Streamlit Community Cloud so it
+can be opened directly from the lab browser:
 
-1. Uploaded the project files / installed dependencies (`pip install -r requirements.txt`).
-2. Ran `streamlit run app.py`.
-3. Interacted with each tab through the browser.
+**Live app URL:** https://irassignment1-group-63.streamlit.app/
 
-`[SCREENSHOT: BITS virtual lab terminal running 'streamlit run app.py']`
-`[SCREENSHOT: BITS virtual lab browser showing the running app]`
+Steps performed:
+
+1. Logged in to the BITS virtual lab (Rocky Linux) and opened the browser.
+2. Opened the deployed app at https://irassignment1-group-63.streamlit.app/
+   (alternatively: `pip install -r requirements.txt` then `streamlit run app.py`).
+3. Interacted with each tab (A–E and G) through the browser; 12 documents loaded.
+
+![BITS virtual lab running the IR app (https://irassignment1-group-63.streamlit.app/)](screenshots/bits_lab_app.png)
+
+*Figure: IR System (Group 63) running in the BITS virtual lab browser — 12 documents loaded, Tab A "View documents and run a search".*
 
 ---
 
@@ -50,8 +54,6 @@ The application was executed on the BITS virtual lab. Steps:
 - **Options**: lowercasing, stop-word removal, hyphen mode, normalization — all in the sidebar.
 - **Intermediate + final outputs**: inverted index (postings), preprocessing stages,
   ranked results — all displayed in the UI.
-
-`[SCREENSHOT: Tab A ranked search results + inverted index expander]`
 
 ---
 
@@ -68,8 +70,6 @@ Pipeline (each stage shown in Tab B):
 - **Stemming**: Porter stemmer (NLTK if installed, else built-in suffix stripper).
 - **Lemmatization**: WordNet (NLTK if available, else rule-based).
 
-`[SCREENSHOT: Tab B preprocessing stages for one document]`
-
 ### 4.1 Stemming vs Lemmatization (retrieval-quality comparison)
 
 We compare on two axes:
@@ -84,8 +84,6 @@ We compare on two axes:
 | No normalization | _fill from app_ | 0.0% |
 | Stemming | _fill from app_ | _e.g._ ~18% |
 | Lemmatization | _fill from app_ | _e.g._ ~10% |
-
-`[SCREENSHOT: Tab B stemming-vs-lemmatization tables + conclusion]`
 
 **Inference:** Stemming conflates more aggressively (e.g. *retrieval/retrieving/retrieved
 → retriev*), giving higher recall and a smaller index, at the cost of producing
@@ -122,8 +120,6 @@ false positives (set difference between the two results).
 **Why positional is more accurate:** it checks global order and adjacency via stored
 positions, which the biword index cannot.
 
-`[SCREENSHOT: Tab C biword vs positional results + false-positive box]`
-
 ---
 
 ## 6. Section D — Dictionary Search: BST vs B-Tree
@@ -144,8 +140,6 @@ Example results table (values produced live in the app):
 | _term2_ | ✓ | _..._ | _..._ | _..._ | _..._ |
 | zzznotfound | ✗ | _..._ | _..._ | _..._ | _..._ |
 
-`[SCREENSHOT: Tab D benchmark metrics + per-query table + averages]`
-
 **Inference:** The B-Tree's height is much smaller than the BST's, so it visits fewer
 nodes. The BST can degrade when terms are inserted in near-sorted order. For small
 in-memory dictionaries the absolute times are close, but **the B-Tree scales far
@@ -164,10 +158,6 @@ The system handles imperfect queries with four techniques (Tab E):
   terms (e.g. `retreival → retrieval`).
 - **K-gram index**: character n-grams ($-padded) mapped to terms; shown explicitly.
 - **Phonetic correction**: **Soundex** matches words that sound alike.
-
-`[SCREENSHOT: Tab E wildcard result]`
-`[SCREENSHOT: Tab E spelling correction suggestions]`
-`[SCREENSHOT: Tab E Soundex matches]`
 
 **Inference:** The model is tolerant to prefix/suffix wildcards, typographical errors
 (within an edit-distance threshold) and phonetic spelling variants, substantially
