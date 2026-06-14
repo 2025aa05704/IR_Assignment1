@@ -25,10 +25,10 @@ Generated and auto-verified on 2026-05-31. Tick the manual items before zipping 
 | # | Task (rubric) | Marks | Implemented in | Verified |
 |---|---------------|-------|----------------|----------|
 | A | Streamlit end-to-end workflow (upload, view, query, options, outputs) | 1.0 | `app.py` Tab A + sidebar | ✅ app boots (HTTP 200), ranked search returns results; live at https://irassignment1-group-63.streamlit.app/ |
-| B | Text preprocessing (tokenize, lowercase, stop-words, hyphen, stem/lemma, inverted index) | 1.5 | `app.py` Tab B, `ir_utils.preprocess*` | ✅ 6 pipeline stages produced; inverted index built (263 terms) |
+| B | Text preprocessing (tokenize, lowercase, stop-words, hyphen, stem/lemma, inverted index) | 1.5 | `app.py` Tab B, `ir_utils.preprocess*` | ✅ 6 pipeline stages produced; inverted index built (248 terms, deployed/NLTK) |
 | B | Stemming vs lemmatization comparison + conclusion | 1.0 | `app.py` Tab B | ✅ vocab-reduction + Jaccard tables + auto conclusion |
 | C | Phrase query: biword + positional index + false positives | 1.5 | `app.py` Tab C, `ir_utils.phrase_query_*` | ✅ both indexes return results; false-positive diff shown |
-| D | Binary Search Tree vs B-Tree comparison (search/retrieval time table) | 1.5 | `app.py` Tab D, `ir_utils.benchmark_trees` | ✅ comparisons + timing table; BST h=16 vs B-Tree h=4 |
+| D | Binary Search Tree vs B-Tree comparison (search/retrieval time table) | 1.5 | `app.py` Tab D, `ir_utils.benchmark_trees` | ✅ comparisons + timing table; BST h=16 vs B-Tree h=3 (t=6) |
 | E | Tolerant retrieval (wildcard, spelling, edit distance, k-gram, phonetic) | 1.5 | `app.py` Tab E, `ir_utils` | ✅ wildcard, edit-distance spell, k-gram, Soundex all work |
 | G | Inference & discussion (compulsory) | 1.0 | `app.py` Tab G + `report/Report.md` | ✅ all 7 required questions answered |
 | — | Virtual lab usage | 1.0 | (run on BITS lab) | ✅ executed on BITS virtual lab (Rocky Linux); screenshot in `report/screenshots/bits_lab_app.png` |
@@ -44,10 +44,10 @@ Generated and auto-verified on 2026-05-31. Tick the manual items before zipping 
   (Piyali Sarkar, Prateek Kumar Gupta, Kashif Zuhair); `Group63_Contribution.xlsx` regenerated.
 - ✅ **Run on the BITS virtual lab**: executed on Rocky Linux lab; deployed app opened at
   https://irassignment1-group-63.streamlit.app/.
-- ⬜ **Save the BITS lab screenshot** to `report/screenshots/bits_lab_app.png` (referenced by `report/Report.md` Section 2).
-- ⬜ **Add remaining screenshots** to `report/Report.md` at every `[SCREENSHOT: ...]` marker
-  (Tab A search, Tab B stages + stem/lemma tables, Tab C results, Tab D benchmark, Tab E techniques).
-- ⬜ **Export report** to PDF (`report/Report.md` → `Report.pdf`) for submission.
+- ✅ **Save the BITS lab screenshot** to `report/screenshots/bits_lab_app.png` (referenced by `report/Report.md` Section 2).
+- ✅ **Add tab screenshots** to `report/Report.md` — 9 figures embedded (`shot1.png`–`shot9.png`):
+  Tab A landing/docs/inverted index, Tab B stages, Tab C indexes, Tab D benchmark, Tab E tolerant, Tab G inferences.
+- ✅ **Export report** to PDF (`report/Report.md` → `Report.pdf`), regenerated via `python report/build_pdf.py`.
 - ⬜ (Optional) **Demo recording**: short screen recording of the app running.
 
 ---
@@ -72,11 +72,13 @@ Group63_IR_Assignment1/
 └── report/
     ├── Report.md
     ├── Report.pdf              (exported final report)
+    ├── build_pdf.py            (Markdown -> PDF generator)
     └── screenshots/
-        └── bits_lab_app.png    (+ any other tab screenshots)
+        ├── bits_lab_app.png    (BITS virtual lab)
+        └── shot1.png … shot9.png  (tab screenshots referenced by Report.md)
 ```
 
-Exclude `.venv/`, `__pycache__/`, `.idea/`, `.git/`, `.DS_Store` from the zip.
+Exclude `.venv/`, `__pycache__/`, `.idea/`, `.git/`, `.DS_Store`, and `report/Report.html` (intermediate) from the zip.
 
 ---
 
@@ -98,11 +100,12 @@ offline / in the virtual lab. The active engine is shown in the sidebar.
 
 ```
 all .py compile OK
-A: docs=12  vocab=263  top=doc01_information_retrieval.txt  score=0.392
-B: 6 preprocessing stages; stem('retrieving')=retriev, lemma=retrieving
-C: biword=[0,1,3,5,9,10]  positional=[0,1,3,5,9,10]
-D: terms=263  bst_height=16  btree_height=4
+A: docs=12  vocab=248  top=doc01_information_retrieval.txt  score=0.400
+B: 6 preprocessing stages; stem('retrieving')=retriev, lemma('retrieving')=retrieve
+C: phrase 'wildcard query information' -> biword=[3,7]  positional=[7]  (doc3 = false positive, correctly rejected)
+D: terms=248  bst_height=16  btree_height=3 (t=6)
 E: wildcard inform*=['inform']; spell 'retreival'->[('retrieval',2)]; soundex('retrievel')=R361
 xlsx: valid (zip integrity OK)
 Streamlit app: boots headless, HTTP 200
+(deployed app uses NLTK; built-in fallback gives vocab=263, btree_height=4 at t=3)
 ```

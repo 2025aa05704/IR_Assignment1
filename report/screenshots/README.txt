@@ -5,5 +5,3 @@ Required for Report.md Section 2 (BITS virtual lab):
                         browser (Rocky Linux, https://irassignment1-group-63.streamlit.app/)
 
 Add any other tab screenshots here and reference them from Report.md.
-</CodeContent>
-<parameter name="EmptyFile">false

@@ -75,6 +75,12 @@ can be opened directly from the lab browser:</p>
 <li><strong>Intermediate + final outputs</strong>: inverted index (postings), preprocessing stages,<br />
   ranked results — all displayed in the UI.</li>
 </ul>
+<p><img alt="IR app — Tab A landing page with the six tabs and search box (12 documents loaded)" src="screenshots/shot1.png" /></p>
+<p><em>Figure A1: Tab A — landing view (deployed app, Rocky Linux). Sidebar holds the dataset uploader and preprocessing options; the six tabs (A–E, G) run the full pipeline.</em></p>
+<p><img alt="IR app — Tab A with the document collection expanded" src="screenshots/shot2.png" /></p>
+<p><em>Figure A2: Tab A — "View uploaded documents" expanded, showing the sample collection (doc01, doc02 …).</em></p>
+<p><img alt="IR app — Tab A inverted index showing 248 vocabulary terms" src="screenshots/shot3.png" /></p>
+<p><em>Figure A3: Tab A — inverted index (postings lists); the dictionary holds 248 distinct terms under stemming.</em></p>
 <hr />
 <h2>4. Section B — Text Preprocessing</h2>
 <p>Pipeline (each stage shown in Tab B):<br />
@@ -88,6 +94,8 @@ can be opened directly from the lab browser:</p>
 <li><strong>Stemming</strong>: Porter stemmer (NLTK if installed, else built-in suffix stripper).</li>
 <li><strong>Lemmatization</strong>: WordNet (NLTK if available, else rule-based).</li>
 </ul>
+<p><img alt="IR app — Tab B preprocessing pipeline stages" src="screenshots/shot5.png" /></p>
+<p><em>Figure B1: Tab B — each preprocessing stage shown for doc01 (tokenization → lowercasing → hyphen handling → …).</em></p>
 <h3>4.1 Stemming vs Lemmatization (retrieval-quality comparison)</h3>
 <p>We compare on two axes:</p>
 <ol>
@@ -107,27 +115,29 @@ can be opened directly from the lab browser:</p>
 <tbody>
 <tr>
 <td>No normalization</td>
-<td><em>fill from app</em></td>
+<td>306</td>
 <td>0.0%</td>
 </tr>
 <tr>
 <td>Stemming</td>
-<td><em>fill from app</em></td>
-<td><em>e.g.</em> ~18%</td>
+<td>248</td>
+<td>19.0%</td>
 </tr>
 <tr>
 <td>Lemmatization</td>
-<td><em>fill from app</em></td>
-<td><em>e.g.</em> ~10%</td>
+<td>260</td>
+<td>15.0%</td>
 </tr>
 </tbody>
 </table>
+<p><em>Measured on the deployed app (NLTK Porter stemmer + WordNet lemmatizer). With the<br />
+built-in fallback normalizers the figures are 306 / 263 / 280.</em></p>
 <p><strong>Inference:</strong> Stemming conflates more aggressively (e.g. <em>retrieval/retrieving/retrieved<br />
 → retriev</em>), giving higher recall and a smaller index, at the cost of producing<br />
 non-dictionary stems. Lemmatization yields valid words (better precision/readability)<br />
 but merges fewer forms. <strong>For this dataset stemming is more suitable</strong> because it<br />
 maximises recall on a small collection; lemmatization is preferable when output<br />
-readability/precision matters. (Exact numbers are produced live by the app.)</p>
+readability/precision matters. (Numbers above are from the deployed app and are reproducible live in Tab B.)</p>
 <hr />
 <h2>5. Section C — Phrase Query Processing</h2>
 <p>Implemented and compared two indexes:</p>
@@ -169,6 +179,8 @@ positions in order</strong>.</p>
 </tr>
 </tbody>
 </table>
+<p><img alt="IR app — Tab C biword and positional index representations" src="screenshots/shot6.png" /></p>
+<p><em>Figure C1: Tab C — sample biword index entries (top) and the positional index (term → {doc: [positions]}).</em></p>
 <p><strong>False positives:</strong> for a phrase like <em>"a b c"</em>, a document containing <em>"a b … c b"</em><br />
 has both biwords <em>"a b"</em> and <em>"b c"</em> but not the contiguous phrase. The biword index<br />
 returns it; the positional index correctly rejects it. The app highlights such<br />
@@ -184,50 +196,63 @@ positions, which the biword index cannot.</p>
   few node accesses (disk-friendly).</li>
 </ul>
 <p>We run multiple query terms many times and record <strong>comparisons</strong> and <strong>search time</strong>.</p>
-<p>Example results table (values produced live in the app):</p>
+<p>Results from the deployed run (Tab D, <strong>t = 6</strong>, 248-term dictionary). Comparison counts<br />
+are deterministic (terms inserted in a fixed shuffled order, seed 42).</p>
 <table>
 <thead>
 <tr>
 <th>Query Term</th>
 <th>Found</th>
 <th>BST Comparisons</th>
-<th>B-Tree Comparisons</th>
-<th>BST Time (µs)</th>
-<th>B-Tree Time (µs)</th>
+<th>B-Tree Comparisons (t=6)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><em>term1</em></td>
+<td>abil</td>
 <td>✓</td>
-<td><em>...</em></td>
-<td><em>...</em></td>
-<td><em>...</em></td>
-<td><em>...</em></td>
+<td>5</td>
+<td>3</td>
 </tr>
 <tr>
-<td><em>term2</em></td>
+<td>inform</td>
 <td>✓</td>
-<td><em>...</em></td>
-<td><em>...</em></td>
-<td><em>...</em></td>
-<td><em>...</em></td>
+<td>14</td>
+<td>11</td>
+</tr>
+<tr>
+<td>process</td>
+<td>✓</td>
+<td>12</td>
+<td>15</td>
+</tr>
+<tr>
+<td>test</td>
+<td>✓</td>
+<td>12</td>
+<td>16</td>
 </tr>
 <tr>
 <td>zzznotfound</td>
 <td>✗</td>
-<td><em>...</em></td>
-<td><em>...</em></td>
-<td><em>...</em></td>
-<td><em>...</em></td>
+<td>10</td>
+<td>21</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Inference:</strong> The B-Tree's height is much smaller than the BST's, so it visits fewer<br />
-nodes. The BST can degrade when terms are inserted in near-sorted order. For small<br />
-in-memory dictionaries the absolute times are close, but <strong>the B-Tree scales far<br />
-better for large, disk-resident dictionaries</strong> because each node access (a disk read)<br />
-is expensive and the B-Tree minimises them.</p>
+<p><strong>Structure &amp; timing:</strong> BST height <strong>16</strong> vs B-Tree height <strong>3</strong>; build time BST<br />
+<strong>0.288 ms</strong> vs B-Tree <strong>0.594 ms</strong>. Per-query search times were sub-microsecond and<br />
+machine-dependent (see figure).</p>
+<p><img alt="IR app — Tab D BST vs B-Tree benchmark: 248 terms, BST height 16, B-Tree height 3" src="screenshots/shot7.png" /></p>
+<p><em>Figure D1: Tab D — BST vs B-Tree benchmark. Terms 248, BST height 16, B-Tree height 3 (t=6), build times 0.288 ms vs 0.594 ms.</em></p>
+<p><strong>Inference:</strong> The B-Tree's height (<strong>3</strong>) is far smaller than the BST's (<strong>16</strong>), so it<br />
+visits far fewer nodes. Because each wide B-Tree node (up to 2t−1 = 11 keys at t=6) is<br />
+scanned linearly, the <em>total key-comparison</em> count can be similar to — or even higher<br />
+than — the BST's; the decisive, disk-relevant metric is the number of <strong>node accesses</strong>,<br />
+which the B-Tree minimises. The BST can also degrade when terms are inserted in<br />
+near-sorted order. For small in-memory dictionaries the absolute times are close, but<br />
+<strong>the B-Tree scales far better for large, disk-resident dictionaries</strong> because each node<br />
+access (a disk read) is expensive.</p>
 <hr />
 <h2>7. Section E — Tolerant Retrieval</h2>
 <p>The system handles imperfect queries with four techniques (Tab E):</p>
@@ -242,6 +267,10 @@ is expensive and the B-Tree minimises them.</p>
 <p><strong>Inference:</strong> The model is tolerant to prefix/suffix wildcards, typographical errors<br />
 (within an edit-distance threshold) and phonetic spelling variants, substantially<br />
 improving recall on noisy queries.</p>
+<p><img alt="IR app — Tab A query with no exact matches, suggesting tolerant retrieval" src="screenshots/shot4.png" /></p>
+<p><em>Figure E1: A query that returns no exact matches; the app suggests tolerant retrieval (Tab E).</em></p>
+<p><img alt="IR app — Tab E phonetic (Soundex) matching" src="screenshots/shot8.png" /></p>
+<p><em>Figure E2: Tab E — phonetic correction. Soundex("retrievel") = R361 matches retrieval / retrieved / retrieves.</em></p>
 <hr />
 <h2>8. Section G — Inference and Discussion (Compulsory)</h2>
 <ul>
@@ -260,6 +289,8 @@ improving recall on noisy queries.</p>
 <li><strong>Improvements:</strong> BM25 ranking, dense/embedding retrieval, frequency-weighted spelling<br />
   correction, query expansion, persistent on-disk indexes, relevance feedback.</li>
 </ul>
+<p><img alt="IR app — Tab G inferences and discussion" src="screenshots/shot9.png" /></p>
+<p><em>Figure G1: Tab G — the compulsory inference and discussion answers shown in-app.</em></p>
 <hr />
 <h2>9. How to Run (summary)</h2>
 <pre><code class="language-bash">pip install -r requirements.txt
